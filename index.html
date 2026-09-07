@@ -37,8 +37,11 @@
       </div>
 
       <div class="slot-picker">
-        <label for="time-slot">Choose an appointment time</label>
+        <label for="booking-date">Choose a date</label>
+        <input type="date" id="booking-date">
+        <label for="time-slot">Choose a time</label>
         <select id="time-slot"></select>
+        <p id="slot-message" class="slot-message"></p>
       </div>
 
       <button id="checkout-btn" class="checkout-btn" disabled>Confirm &amp; Pay</button>
@@ -48,12 +51,13 @@
 
   <div id="confirmation-overlay" class="overlay hidden">
     <div class="confirmation-box">
-      <h3>This is a demo</h3>
-      <p>In the live version, this button takes the customer to a secure Stripe payment page, then confirms their booking by email — no code changes needed, just Relief Recovery's own treatments, appointment times, and Stripe account.</p>
+      <h3>Booking received!</h3>
+      <p>Your slot has been saved to Relief Recovery's diary, so no one else can book the same time. In the live version, this step happens right after a secure Stripe payment.</p>
       <button id="close-overlay" class="checkout-btn">Close</button>
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="script.js"></script>
 </body>
 </html>

@@ -197,11 +197,19 @@ h2 {
   color: var(--muted);
 }
 
-.slot-picker select {
+.slot-picker select,
+.slot-picker input[type="date"] {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid var(--border);
   font-size: 14px;
+}
+
+.slot-message {
+  font-size: 13px;
+  color: #b8542f;
+  margin: 2px 0 0;
+  min-height: 16px;
 }
 
 .checkout-btn {
