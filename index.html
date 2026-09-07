@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Demo Business — Order Online</title>
+<title>Relief Recovery — Book Online</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,22 +11,22 @@
   <header class="site-header">
     <div class="header-inner">
       <div class="brand">
-        <div class="brand-mark">DB</div>
-        <span class="brand-name">Demo Business</span>
+        <img src="logo.jpeg" alt="Relief Recovery logo" class="brand-mark">
+        <span class="brand-name">Relief Recovery</span>
       </div>
-      <p class="tagline">Order or book online in a few taps</p>
+      <p class="tagline">Sports massage &amp; recovery therapy — book online in a few taps</p>
     </div>
   </header>
 
   <main class="page">
 
     <section class="products-section">
-      <h2>Products &amp; Services</h2>
+      <h2>Treatments</h2>
       <div id="product-list" class="product-grid"></div>
     </section>
 
     <aside class="basket-panel">
-      <h2>Your Basket</h2>
+      <h2>Your Booking</h2>
       <div id="basket-items" class="basket-items">
         <p class="empty-basket">Nothing added yet</p>
       </div>
@@ -37,11 +37,11 @@
       </div>
 
       <div class="slot-picker">
-        <label for="time-slot">Choose a time</label>
+        <label for="time-slot">Choose an appointment time</label>
         <select id="time-slot"></select>
       </div>
 
-      <button id="checkout-btn" class="checkout-btn" disabled>Checkout</button>
+      <button id="checkout-btn" class="checkout-btn" disabled>Confirm &amp; Pay</button>
     </aside>
 
   </main>
@@ -49,7 +49,7 @@
   <div id="confirmation-overlay" class="overlay hidden">
     <div class="confirmation-box">
       <h3>This is a demo</h3>
-      <p>In the live version, this button takes the customer to a secure Stripe payment page, then confirms their order by email — no code changes needed for a real business, just their own products, times, and Stripe account.</p>
+      <p>In the live version, this button takes the customer to a secure Stripe payment page, then confirms their booking by email — no code changes needed, just Relief Recovery's own treatments, appointment times, and Stripe account.</p>
       <button id="close-overlay" class="checkout-btn">Close</button>
     </div>
   </div>

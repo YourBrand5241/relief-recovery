@@ -1,11 +1,13 @@
 // ---- Demo data ----
-// Swap this list for a real business's products/services later —
-// nothing else in this file needs to change.
+// Relief Recovery's real treatment list — this is the only part of the
+// app that changes from business to business; everything else (basket,
+// booking, checkout) stays exactly the same.
 const PRODUCTS = [
-  { id: 1, name: "Standard Package", desc: "Our most popular option, great for most customers.", price: 15.00, emoji: "⭐" },
-  { id: 2, name: "Premium Package", desc: "A more thorough option with extra time and attention.", price: 25.00, emoji: "✨" },
-  { id: 3, name: "Quick Option", desc: "A faster, lighter version for when time is tight.", price: 8.00, emoji: "⚡" },
-  { id: 4, name: "Add-on Extra", desc: "A small extra that pairs well with any package.", price: 3.50, emoji: "➕" },
+  { id: 1, name: "Deep Tissue Massage (60 min)", desc: "Firm-pressure massage targeting muscle tension and tightness.", price: 55.00, emoji: "💆" },
+  { id: 2, name: "Sports Massage (30 min)", desc: "Focused pre/post-activity massage to aid performance and recovery.", price: 35.00, emoji: "🏃" },
+  { id: 3, name: "Dry Cupping Therapy", desc: "Suction cupping to ease muscle tightness and improve circulation.", price: 40.00, emoji: "🫙" },
+  { id: 4, name: "Dry Needling", desc: "Targeted needling to release tight muscle trigger points.", price: 35.00, emoji: "🪡" },
+  { id: 5, name: "Full Recovery Session (90 min)", desc: "Combined massage, cupping and needling for a complete recovery session.", price: 85.00, emoji: "✨" },
 ];
 
 let basket = []; // { id, name, price, qty }
