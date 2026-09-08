@@ -14,11 +14,11 @@ const SCHEDULES = {
 // app that changes from business to business; everything else (basket,
 // diary, booking) stays exactly the same.
 const PRODUCTS = [
-  { id: 1, name: "Deep Tissue Massage (60 min)", desc: "Firm-pressure massage targeting muscle tension and tightness.", price: 55.00, emoji: "💆", category: "standard" },
-  { id: 2, name: "Sports Massage (30 min)", desc: "Focused pre/post-activity massage to aid performance and recovery.", price: 35.00, emoji: "🏃", category: "standard" },
-  { id: 3, name: "Dry Cupping Therapy", desc: "Suction cupping to ease muscle tightness and improve circulation.", price: 40.00, emoji: "🫙", category: "standard" },
-  { id: 4, name: "Dry Needling", desc: "Targeted needling to release tight muscle trigger points.", price: 35.00, emoji: "🪡", category: "standard" },
-  { id: 5, name: "Full Recovery Session (90 min)", desc: "Combined massage, cupping and needling for a complete recovery session.", price: 85.00, emoji: "✨", category: "standard" },
+  { id: 1, name: "Deep Tissue Massage (60 min)", desc: "Firm-pressure massage targeting muscle tension and tightness.", price: 55.00, emoji: "💆", category: "standard", duration: 60 },
+  { id: 2, name: "Sports Massage (30 min)", desc: "Focused pre/post-activity massage to aid performance and recovery.", price: 35.00, emoji: "🏃", category: "standard", duration: 30 },
+  { id: 3, name: "Dry Cupping Therapy", desc: "Suction cupping to ease muscle tightness and improve circulation.", price: 40.00, emoji: "🫙", category: "standard", duration: 30 },
+  { id: 4, name: "Dry Needling", desc: "Targeted needling to release tight muscle trigger points.", price: 35.00, emoji: "🪡", category: "standard", duration: 30 },
+  { id: 5, name: "Full Recovery Session (90 min)", desc: "Combined massage, cupping and needling for a complete recovery session.", price: 85.00, emoji: "✨", category: "standard", duration: 90 },
 ];
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
@@ -66,7 +66,7 @@ function addToBasket(productId) {
   if (existing) {
     existing.qty += 1;
   } else {
-    basket.push({ id: product.id, name: product.name, price: product.price, qty: 1, category: product.category });
+    basket.push({ id: product.id, name: product.name, price: product.price, qty: 1, category: product.category, duration: product.duration });
   }
   renderBasket();
   refreshSlotsForCurrentDate();
@@ -114,6 +114,15 @@ function renderBasket() {
 function getScheduleForBasket() {
   if (basket.length === 0) return null;
   return SCHEDULES[basket[0].category];
+}
+
+function getTotalDurationForBasket() {
+  return basket.reduce((sum, item) => sum + item.duration * item.qty, 0);
+}
+
+function timeToMinutes(t) {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
 }
 
 function pad(n) {
@@ -168,16 +177,32 @@ async function refreshSlotsForCurrentDate() {
   message.textContent = "Checking availability…";
   timeSelect.innerHTML = "";
 
+  const totalDuration = getTotalDurationForBasket();
   const allSlots = buildAllSlotsForDay(schedule);
+  const closingMinutes = schedule.endHour * 60;
 
   const { data, error } = await supabaseClient
     .from("bookings")
-    .select("booking_time")
+    .select("booking_time, duration_minutes")
     .eq("business_id", BUSINESS_ID)
     .eq("booking_date", dateInput.value);
 
-  const takenTimes = error ? [] : data.map(row => row.booking_time.slice(0, 5));
-  const availableSlots = allSlots.filter(t => !takenTimes.includes(t));
+  const existingBookings = error ? [] : data.map(row => ({
+    start: timeToMinutes(row.booking_time.slice(0, 5)),
+    end: timeToMinutes(row.booking_time.slice(0, 5)) + (row.duration_minutes || SLOT_MINUTES),
+  }));
+
+  const availableSlots = allSlots.filter(t => {
+    const start = timeToMinutes(t);
+    const end = start + totalDuration;
+
+    // The treatment must finish before closing time.
+    if (end > closingMinutes) return false;
+
+    // The treatment's full length must not overlap any existing booking's full length.
+    const overlaps = existingBookings.some(b => start < b.end && end > b.start);
+    return !overlaps;
+  });
 
   if (availableSlots.length === 0) {
     message.textContent = "No times left on that day — please try another date.";
@@ -216,6 +241,7 @@ async function confirmBooking() {
 
   const serviceNames = basket.map(i => `${i.qty} x ${i.name}`).join(", ");
   const total = basket.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const totalDuration = getTotalDurationForBasket();
 
   const { error } = await supabaseClient.from("bookings").insert({
     business_id: BUSINESS_ID,
@@ -225,11 +251,12 @@ async function confirmBooking() {
     total_price: total,
     customer_name: nameInput.value.trim(),
     customer_phone: phoneInput.value.trim(),
+    duration_minutes: totalDuration,
   });
 
   if (error) {
     if (error.code === "23505") {
-      alert("Sorry, someone just booked that exact slot. Please pick a different time.");
+      alert("Sorry, someone just booked that exact start time. Please pick a different time.");
       refreshSlotsForCurrentDate();
     } else {
       alert("Something went wrong saving the booking — please try again.");

@@ -30,6 +30,11 @@ function formatTimeLabel(t) {
   return `${hour12}:${pad(m)} ${period}`;
 }
 
+function timeToMinutes(t) {
+  const [h, m] = t.split(":").map(Number);
+  return h * 60 + m;
+}
+
 function buildAllSlotsForDay(schedule) {
   const slots = [];
   for (let mins = schedule.startHour * 60; mins < schedule.endHour * 60; mins += SLOT_MINUTES) {
@@ -65,7 +70,7 @@ async function loadDiary() {
 
   const { data, error } = await supabaseClient
     .from("bookings")
-    .select("booking_time, customer_name, customer_phone, service_names, total_price")
+    .select("booking_time, duration_minutes, customer_name, customer_phone, service_names, total_price")
     .eq("business_id", BUSINESS_ID)
     .eq("booking_date", date);
 
@@ -80,13 +85,24 @@ function renderDiary(schedule) {
   listEl.innerHTML = "";
 
   allSlots.forEach(t => {
-    const booking = currentBookings.find(b => b.booking_time.slice(0, 5) === t);
+    const slotMinutes = timeToMinutes(t);
+    // A slot counts as booked if it falls anywhere within an existing
+    // treatment's full length, not just at its exact start time.
+    const booking = currentBookings.find(b => {
+      const start = timeToMinutes(b.booking_time.slice(0, 5));
+      const end = start + (b.duration_minutes || SLOT_MINUTES);
+      return slotMinutes >= start && slotMinutes < end;
+    });
+
     const row = document.createElement("div");
     row.className = `diary-row ${booking ? "diary-booked" : "diary-available"}`;
 
     let statusText = booking ? "Booked" : "Available";
     if (booking && ownerUnlocked) {
-      statusText = `Booked — ${booking.customer_name || "no name given"} (${booking.customer_phone || "no phone"}) — ${booking.service_names}`;
+      const isStart = timeToMinutes(booking.booking_time.slice(0, 5)) === slotMinutes;
+      statusText = isStart
+        ? `Booked — ${booking.customer_name || "no name given"} (${booking.customer_phone || "no phone"}) — ${booking.service_names}`
+        : "Booked (ongoing)";
     }
 
     row.innerHTML = `<span>${formatTimeLabel(t)}</span><span>${statusText}</span>`;
