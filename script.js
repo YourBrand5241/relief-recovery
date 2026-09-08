@@ -2,7 +2,15 @@
 const SUPABASE_URL = "https://jywhymtctdnvwwvxtcpw.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8-VfhsJiclZMwjjkZ-k18A_gLYKbaGR";
 const BUSINESS_ID = "relief-recovery";
+const BUSINESS_NAME = "Relief Recovery";
 const SLOT_MINUTES = 30; // length of each bookable slot shown in the picker
+
+// EmailJS — fill these in once you've created your account, service, and
+// template (see chat for the steps). Same account/template can be reused
+// across all your sites.
+const EMAILJS_SERVICE_ID = "service_zzjha2e";
+const EMAILJS_TEMPLATE_ID = "0hxdz45";
+const EMAILJS_PUBLIC_KEY = "fs6q7ZsiYGhRUtas5";
 
 // Relief Recovery's diary: Monday to Friday, 9am–5pm, one schedule for everything
 const SCHEDULES = {
@@ -22,6 +30,10 @@ const PRODUCTS = [
 ];
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
 
 let basket = []; // { id, name, price, qty, category }
 
@@ -223,21 +235,23 @@ function updateCheckoutAvailability() {
   const dateInput = document.getElementById("booking-date");
   const timeSelect = document.getElementById("time-slot");
   const nameInput = document.getElementById("customer-name");
+  const emailInput = document.getElementById("customer-email");
   const phoneInput = document.getElementById("customer-phone");
   const checkoutBtn = document.getElementById("checkout-btn");
   checkoutBtn.disabled = basket.length === 0 || !dateInput.value || !timeSelect.value
-    || !nameInput.value.trim() || !phoneInput.value.trim();
+    || !nameInput.value.trim() || !emailInput.value.trim() || !phoneInput.value.trim();
 }
 
 async function confirmBooking() {
   const dateInput = document.getElementById("booking-date");
   const timeSelect = document.getElementById("time-slot");
   const nameInput = document.getElementById("customer-name");
+  const emailInput = document.getElementById("customer-email");
   const phoneInput = document.getElementById("customer-phone");
   const date = dateInput.value;
   const time = timeSelect.value;
 
-  if (basket.length === 0 || !date || !time || !nameInput.value.trim() || !phoneInput.value.trim()) return;
+  if (basket.length === 0 || !date || !time || !nameInput.value.trim() || !emailInput.value.trim() || !phoneInput.value.trim()) return;
 
   const serviceNames = basket.map(i => `${i.qty} x ${i.name}`).join(", ");
   const total = basket.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -250,6 +264,7 @@ async function confirmBooking() {
     service_names: serviceNames,
     total_price: total,
     customer_name: nameInput.value.trim(),
+    customer_email: emailInput.value.trim(),
     customer_phone: phoneInput.value.trim(),
     duration_minutes: totalDuration,
   });
@@ -265,12 +280,28 @@ async function confirmBooking() {
     return;
   }
 
+  // Send a confirmation email — if this fails for any reason (EmailJS not
+  // configured yet, network issue) the booking itself has still succeeded,
+  // so we don't block the confirmation on it.
+  if (window.emailjs && EMAILJS_PUBLIC_KEY !== "YOUR_PUBLIC_KEY") {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email: emailInput.value.trim(),
+      to_name: nameInput.value.trim(),
+      business_name: BUSINESS_NAME,
+      service_names: serviceNames,
+      booking_date: date,
+      booking_time: formatTimeLabel(time),
+      total_price: formatPrice(total),
+    }).catch(err => console.error("Confirmation email failed to send:", err));
+  }
+
   document.getElementById("confirmation-overlay").classList.remove("hidden");
   basket = [];
   renderBasket();
   document.getElementById("time-slot").innerHTML = "";
   document.getElementById("slot-message").textContent = "";
   nameInput.value = "";
+  emailInput.value = "";
   phoneInput.value = "";
 }
 
@@ -290,6 +321,7 @@ function setupDatePicker() {
 
 document.getElementById("time-slot").addEventListener("change", updateCheckoutAvailability);
 document.getElementById("customer-name").addEventListener("input", updateCheckoutAvailability);
+document.getElementById("customer-email").addEventListener("input", updateCheckoutAvailability);
 document.getElementById("customer-phone").addEventListener("input", updateCheckoutAvailability);
 
 renderProducts();

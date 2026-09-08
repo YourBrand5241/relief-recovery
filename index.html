@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Relief Recovery — Book Online</title>
+<title>Relief Recovery | Sports Massage &amp; Recovery Therapy — Book Online</title>
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -15,6 +16,7 @@
         <span class="brand-name">Relief Recovery</span>
       </div>
       <p class="tagline">Sports massage &amp; recovery therapy — book online in a few taps</p>
+      <p class="hours-line">Open Monday–Friday, 9:00am–5:00pm</p>
       <nav class="site-nav">
         <a href="index.html" class="active">Book Online</a>
         <a href="diary.html">View Diary</a>
@@ -43,6 +45,8 @@
       <div class="slot-picker">
         <label for="customer-name">Your name</label>
         <input type="text" id="customer-name" placeholder="Full name">
+        <label for="customer-email">Email</label>
+        <input type="email" id="customer-email" placeholder="you@example.com">
         <label for="customer-phone">Phone number</label>
         <input type="tel" id="customer-phone" placeholder="e.g. 07123 456789">
       </div>
@@ -60,6 +64,14 @@
 
   </main>
 
+  <section class="about-section-wrap">
+    <div class="about-inner">
+      <h2>About Relief Recovery</h2>
+      <p class="about-text">Relief Recovery is a Belfast-based sports massage and recovery therapy clinic, helping athletes and everyday clients recover, manage pain, and stay in peak condition. From deep tissue massage to dry cupping and needling, every treatment is tailored to what your body needs.</p>
+      <p class="about-placeholder-note">(Placeholder text — swap this for your own words, background, and qualifications.)</p>
+    </div>
+  </section>
+
   <div id="confirmation-overlay" class="overlay hidden">
     <div class="confirmation-box">
       <h3>Booking received!</h3>
@@ -69,6 +81,7 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
