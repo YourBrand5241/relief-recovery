@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relief Recovery — Diary</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="logo.jpeg" alt="Relief Recovery logo" class="brand-mark">
+        <span class="brand-name">Relief Recovery</span>
+      </div>
+      <p class="tagline">See what's available before you book</p>
+      <nav class="site-nav">
+        <a href="index.html">Book Online</a>
+        <a href="diary.html" class="active">View Diary</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="page diary-page">
+
+    <section class="diary-section">
+      <h2>Availability</h2>
+      <label for="diary-date">Choose a date</label>
+      <input type="date" id="diary-date">
+      <p id="diary-message" class="slot-message"></p>
+      <div id="diary-list" class="diary-list"></div>
+    </section>
+
+    <section class="diary-section owner-panel">
+      <h2>Business Owner?</h2>
+      <p class="owner-note">Enter the owner password to see who's booked in for the selected day.</p>
+      <input type="password" id="owner-password" placeholder="Owner password">
+      <button id="owner-unlock-btn" class="checkout-btn">Unlock owner view</button>
+      <p id="owner-status" class="slot-message"></p>
+    </section>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="diary.js"></script>
+</body>
+</html>

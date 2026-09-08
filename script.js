@@ -197,17 +197,22 @@ async function refreshSlotsForCurrentDate() {
 function updateCheckoutAvailability() {
   const dateInput = document.getElementById("booking-date");
   const timeSelect = document.getElementById("time-slot");
+  const nameInput = document.getElementById("customer-name");
+  const phoneInput = document.getElementById("customer-phone");
   const checkoutBtn = document.getElementById("checkout-btn");
-  checkoutBtn.disabled = basket.length === 0 || !dateInput.value || !timeSelect.value;
+  checkoutBtn.disabled = basket.length === 0 || !dateInput.value || !timeSelect.value
+    || !nameInput.value.trim() || !phoneInput.value.trim();
 }
 
 async function confirmBooking() {
   const dateInput = document.getElementById("booking-date");
   const timeSelect = document.getElementById("time-slot");
+  const nameInput = document.getElementById("customer-name");
+  const phoneInput = document.getElementById("customer-phone");
   const date = dateInput.value;
   const time = timeSelect.value;
 
-  if (basket.length === 0 || !date || !time) return;
+  if (basket.length === 0 || !date || !time || !nameInput.value.trim() || !phoneInput.value.trim()) return;
 
   const serviceNames = basket.map(i => `${i.qty} x ${i.name}`).join(", ");
   const total = basket.reduce((sum, i) => sum + i.price * i.qty, 0);
@@ -218,6 +223,8 @@ async function confirmBooking() {
     booking_time: time,
     service_names: serviceNames,
     total_price: total,
+    customer_name: nameInput.value.trim(),
+    customer_phone: phoneInput.value.trim(),
   });
 
   if (error) {
@@ -236,6 +243,8 @@ async function confirmBooking() {
   renderBasket();
   document.getElementById("time-slot").innerHTML = "";
   document.getElementById("slot-message").textContent = "";
+  nameInput.value = "";
+  phoneInput.value = "";
 }
 
 function setupCheckout() {
@@ -253,6 +262,8 @@ function setupDatePicker() {
 }
 
 document.getElementById("time-slot").addEventListener("change", updateCheckoutAvailability);
+document.getElementById("customer-name").addEventListener("input", updateCheckoutAvailability);
+document.getElementById("customer-phone").addEventListener("input", updateCheckoutAvailability);
 
 renderProducts();
 renderBasket();

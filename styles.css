@@ -53,6 +53,107 @@ body {
   font-size: 14px;
 }
 
+.site-nav {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.site-nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.15);
+}
+
+.site-nav a.active {
+  background: rgba(255,255,255,0.9);
+  color: var(--brand-dark);
+}
+
+.slot-picker input[type="text"],
+.slot-picker input[type="tel"] {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.diary-page {
+  grid-template-columns: 1fr !important;
+  max-width: 700px;
+}
+
+.diary-section {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.diary-section label {
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.diary-section input[type="date"] {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.diary-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.diary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.diary-available {
+  background: #eafaf0;
+  color: #1a7a45;
+}
+
+.diary-booked {
+  background: #fdecec;
+  color: #a12626;
+}
+
+.owner-panel {
+  margin-top: 18px;
+}
+
+.owner-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 0;
+}
+
+.owner-panel input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
 .page {
   max-width: 1000px;
   margin: 0 auto;
