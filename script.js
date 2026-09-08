@@ -9,7 +9,7 @@ const SLOT_MINUTES = 30; // length of each bookable slot shown in the picker
 // template (see chat for the steps). Same account/template can be reused
 // across all your sites.
 const EMAILJS_SERVICE_ID = "service_zzjha2e";
-const EMAILJS_TEMPLATE_ID = "0hxdz45";
+const EMAILJS_TEMPLATE_ID = "template_khedkjr";
 const EMAILJS_PUBLIC_KEY = "fs6q7ZsiYGhRUtas5";
 
 // Relief Recovery's diary: Monday to Friday, 9am–5pm, one schedule for everything
