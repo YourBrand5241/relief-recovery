@@ -194,7 +194,7 @@ async function refreshSlotsForCurrentDate() {
   const closingMinutes = schedule.endHour * 60;
 
   const { data, error } = await supabaseClient
-    .from("bookings")
+    .from("public_diary_slots")
     .select("booking_time, duration_minutes")
     .eq("business_id", BUSINESS_ID)
     .eq("booking_date", dateInput.value);
@@ -203,6 +203,26 @@ async function refreshSlotsForCurrentDate() {
     start: timeToMinutes(row.booking_time.slice(0, 5)),
     end: timeToMinutes(row.booking_time.slice(0, 5)) + (row.duration_minutes || SLOT_MINUTES),
   }));
+
+  const { data: blockedData } = await supabaseClient
+    .from("blocked_slots")
+    .select("blocked_time")
+    .eq("business_id", BUSINESS_ID)
+    .eq("blocked_date", dateInput.value);
+
+  const wholeDayBlocked = (blockedData || []).some(row => row.blocked_time === null);
+  if (wholeDayBlocked) {
+    message.textContent = "Relief Recovery is closed on this date — please try another day.";
+    updateCheckoutAvailability();
+    return;
+  }
+
+  // Treat each specific blocked time the same as an existing booking, so
+  // it participates in the same overlap check.
+  (blockedData || []).filter(row => row.blocked_time).forEach(row => {
+    const start = timeToMinutes(row.blocked_time.slice(0, 5));
+    existingBookings.push({ start, end: start + SLOT_MINUTES });
+  });
 
   const availableSlots = allSlots.filter(t => {
     const start = timeToMinutes(t);

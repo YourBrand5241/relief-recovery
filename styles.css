@@ -173,6 +173,11 @@ body {
   color: #a12626;
 }
 
+.diary-blocked {
+  background: #f0f0f0;
+  color: #6b6b6b;
+}
+
 .owner-panel {
   margin-top: 18px;
 }
@@ -453,4 +458,93 @@ h2 {
   color: var(--muted);
   font-style: italic;
   margin-top: 20px;
+}
+
+.owner-portal-page {
+  grid-template-columns: 1fr !important;
+  max-width: 700px;
+}
+
+.owner-portal-page .diary-section {
+  margin-bottom: 18px;
+}
+
+.owner-portal-page label {
+  font-size: 13px;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 6px;
+  margin-top: 10px;
+}
+
+.owner-portal-page input[type="email"],
+.owner-portal-page input[type="password"],
+.owner-portal-page input[type="date"],
+.owner-portal-page input[type="time"],
+.owner-portal-page input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.owner-portal-page .checkout-btn {
+  margin-top: 10px;
+}
+
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.portal-header p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.secondary-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  background: var(--bg);
+}
+
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.appointment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.cancel-btn {
+  border-color: #e8b4b4;
+  color: #a12626;
+  white-space: nowrap;
+}
+
+.cancel-btn:hover {
+  background: #fdecec;
 }

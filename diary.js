@@ -4,20 +4,14 @@ const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_8-VfhsJiclZMwjjkZ-k18A_gLYKbaGR
 const BUSINESS_ID = "relief-recovery";
 const SLOT_MINUTES = 30;
 
-// NOTE: this password only hides the owner view on screen — it is not
-// real security, since the underlying data is still fetched with the
-// same public key the whole site uses. Fine for a demo; swap for proper
-// login (Supabase Auth) before this handles real customer data.
-const OWNER_PASSWORD = "reliefowner2026";
-
 const SCHEDULES = {
   standard: { days: [1, 2, 3, 4, 5], startHour: 9, endHour: 17 },
 };
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
-let ownerUnlocked = false;
 let currentBookings = [];
+let currentBlocked = [];
 
 function pad(n) {
   return String(n).padStart(2, "0");
@@ -69,12 +63,27 @@ async function loadDiary() {
   listEl.innerHTML = "";
 
   const { data, error } = await supabaseClient
-    .from("bookings")
-    .select("booking_time, duration_minutes, customer_name, customer_phone, service_names, total_price")
+    .from("public_diary_slots")
+    .select("booking_time, duration_minutes")
     .eq("business_id", BUSINESS_ID)
     .eq("booking_date", date);
 
+  const { data: blockedData } = await supabaseClient
+    .from("blocked_slots")
+    .select("blocked_time")
+    .eq("business_id", BUSINESS_ID)
+    .eq("blocked_date", date);
+
   currentBookings = error ? [] : data;
+  currentBlocked = blockedData || [];
+
+  const wholeDayBlocked = currentBlocked.some(row => row.blocked_time === null);
+  if (wholeDayBlocked) {
+    messageEl.textContent = "Closed on this date.";
+    listEl.innerHTML = "";
+    return;
+  }
+
   messageEl.textContent = "";
   renderDiary(schedule);
 }
@@ -86,42 +95,29 @@ function renderDiary(schedule) {
 
   allSlots.forEach(t => {
     const slotMinutes = timeToMinutes(t);
-    // A slot counts as booked if it falls anywhere within an existing
-    // treatment's full length, not just at its exact start time.
-    const booking = currentBookings.find(b => {
+
+    const isBooked = currentBookings.some(b => {
       const start = timeToMinutes(b.booking_time.slice(0, 5));
       const end = start + (b.duration_minutes || SLOT_MINUTES);
       return slotMinutes >= start && slotMinutes < end;
     });
 
-    const row = document.createElement("div");
-    row.className = `diary-row ${booking ? "diary-booked" : "diary-available"}`;
+    const isBlocked = currentBlocked.some(b => b.blocked_time && timeToMinutes(b.blocked_time.slice(0, 5)) === slotMinutes);
 
-    let statusText = booking ? "Booked" : "Available";
-    if (booking && ownerUnlocked) {
-      const isStart = timeToMinutes(booking.booking_time.slice(0, 5)) === slotMinutes;
-      statusText = isStart
-        ? `Booked — ${booking.customer_name || "no name given"} (${booking.customer_phone || "no phone"}) — ${booking.service_names}`
-        : "Booked (ongoing)";
+    const row = document.createElement("div");
+    let statusText = "Available";
+    let statusClass = "diary-available";
+    if (isBooked) {
+      statusText = "Booked";
+      statusClass = "diary-booked";
+    } else if (isBlocked) {
+      statusText = "Unavailable";
+      statusClass = "diary-blocked";
     }
 
+    row.className = `diary-row ${statusClass}`;
     row.innerHTML = `<span>${formatTimeLabel(t)}</span><span>${statusText}</span>`;
     listEl.appendChild(row);
-  });
-}
-
-function setupOwnerUnlock() {
-  document.getElementById("owner-unlock-btn").addEventListener("click", () => {
-    const input = document.getElementById("owner-password");
-    const status = document.getElementById("owner-status");
-    if (input.value === OWNER_PASSWORD) {
-      ownerUnlocked = true;
-      status.textContent = "Owner view unlocked — showing customer details below.";
-      const schedule = getScheduleForDate(document.getElementById("diary-date").value);
-      if (schedule) renderDiary(schedule);
-    } else {
-      status.textContent = "Incorrect password.";
-    }
   });
 }
 
@@ -135,5 +131,4 @@ function setupDatePicker() {
 }
 
 setupDatePicker();
-setupOwnerUnlock();
 loadDiary();

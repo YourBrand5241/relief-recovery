@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relief Recovery | Owner Portal</title>
+<link rel="icon" type="image/jpeg" href="logo.jpeg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <img src="logo.jpeg" alt="Relief Recovery logo" class="brand-mark">
+        <span class="brand-name">Relief Recovery</span>
+      </div>
+      <p class="tagline">Owner Portal</p>
+    </div>
+  </header>
+
+  <main class="page owner-portal-page">
+
+    <section id="login-section" class="diary-section">
+      <h2>Sign In</h2>
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="you@example.com">
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" placeholder="Password">
+      <button id="login-btn" class="checkout-btn">Sign In</button>
+      <p id="login-message" class="slot-message"></p>
+    </section>
+
+    <div id="dashboard-section" class="hidden">
+
+      <div class="portal-header">
+        <p id="signed-in-as"></p>
+        <button id="sign-out-btn" class="secondary-btn">Sign Out</button>
+      </div>
+
+      <section class="diary-section">
+        <h2>Upcoming Appointments</h2>
+        <div id="appointments-list" class="appointments-list"></div>
+      </section>
+
+      <section class="diary-section">
+        <h2>Block Off Time</h2>
+        <p class="owner-note">Block a whole day off, or a specific time slot — customers won't be able to book it.</p>
+        <label for="block-date">Date</label>
+        <input type="date" id="block-date">
+        <label for="block-time">Time (leave blank to block the whole day)</label>
+        <input type="time" id="block-time">
+        <label for="block-reason">Reason (optional, for your own reference)</label>
+        <input type="text" id="block-reason" placeholder="e.g. Holiday, dentist appointment">
+        <button id="block-btn" class="checkout-btn">Block This Time</button>
+        <p id="block-message" class="slot-message"></p>
+      </section>
+
+      <section class="diary-section">
+        <h2>Currently Blocked</h2>
+        <div id="blocked-list" class="appointments-list"></div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="owner.js"></script>
+</body>
+</html>
